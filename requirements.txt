@@ -1,4 +1,4 @@
-fastAPI
+fastapi[standard]
 SQLAlchemy
 pandas
 borb
