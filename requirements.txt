@@ -1,0 +1,4 @@
+fastAPI
+SQLAlchemy
+pandas
+borb
