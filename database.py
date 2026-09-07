@@ -37,6 +37,6 @@ Base.metadata.create_all(engine)
 
 
 ## BD Tests
-product_test = Products(nombre="Test", precio=2909.9)
-db_session.add(product_test)
-db_session.commit()
+#product_test = Products(nombre="Test", precio=2909.9)
+#db_session.add(product_test)
+#db_session.commit()
