@@ -3,7 +3,7 @@
 
 ## Libraries
 # Import the necessary classes to work with Pydantic Schemas
-from pydantic import BaseModel
+from pydantic import BaseModel # Checks Data and Data Structures
 
 
 ## Schemas

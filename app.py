@@ -7,7 +7,7 @@
 # Import the engine that contains the path to the db
 from fastapi import FastAPI, status, HTTPException
 from database import db_session, Products
-from models import ProductCreate, ProductResponse
+from schema import ProductCreate, ProductResponse
 
 
 ## FastAPI 
@@ -17,12 +17,12 @@ app = FastAPI()
 ## EndPoints
 
 @app.get("/")
-async def root():
+def root():
     return {"message": "Hello!!"}
 
 # GET /products
 @app.get("/products", response_model=list[ProductResponse])
-async def get_products():
+def get_products():
     try:
         # db_session.query(Products) -> Create the SQL Query (SELECT * FROM products)
         # .all() -> Execute the SQL Query
@@ -32,7 +32,7 @@ async def get_products():
 
 # GET /products/{id}
 @app.get("/products/{id}", response_model=ProductResponse)
-async def get_product(id: int):
+def get_product(id: int):
     try:
         product = db_session.query(Products).filter(Products.id == id).first()
         if product == None:
@@ -45,7 +45,7 @@ async def get_product(id: int):
 
 # POST /products
 @app.post("/products", status_code=status.HTTP_201_CREATED, response_model=ProductResponse)
-async def create_product(product : ProductCreate):
+def create_product(product : ProductCreate):
     try:
         new_product = Products(nombre=product.nombre, precio=product.precio)
         db_session.add(new_product)
@@ -58,7 +58,7 @@ async def create_product(product : ProductCreate):
 
 # PUT /products/{id}
 @app.put("/products/{id}", status_code=status.HTTP_200_OK, response_model=ProductResponse)
-async def update_product(id: int, product: ProductCreate):
+def update_product(id: int, product: ProductCreate):
     try:
         product_to_update = db_session.query(Products).filter(Products.id == id).first()
         if product_to_update is None:
@@ -76,7 +76,7 @@ async def update_product(id: int, product: ProductCreate):
 
 # DELETE /products/{id}
 @app.delete("/products/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_product(id: int):
+def delete_product(id: int):
     try:
         product_to_delete = db_session.query(Products).filter(Products.id == id).first()
         if product_to_delete is None:

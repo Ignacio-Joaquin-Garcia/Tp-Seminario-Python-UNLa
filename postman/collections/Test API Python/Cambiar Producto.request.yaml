@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://0.0.0.0:8000/products/1
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"nombre\": \"Mc Super Doble Cheese\",\r
+
+    \    \"precio\": 17600\r
+
+    }"
+order: 4202209230092778
