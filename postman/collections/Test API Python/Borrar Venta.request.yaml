@@ -1,0 +1,4 @@
+$kind: http-request
+url: http://0.0.0.0:8000/sales/1
+method: DELETE
+order: 4503303246051719

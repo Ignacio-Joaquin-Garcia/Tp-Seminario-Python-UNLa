@@ -1,0 +1,87 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Python Prueba",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "http://0.0.0.0:8000"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Hello World",
+        "responses": {}
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "Listar Productos",
+        "responses": {}
+      },
+      "post": {
+        "summary": "Publicar Producto",
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": {
+                    "type": "string"
+                  },
+                  "precio": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "example": {
+                "nombre": "Mc Super Doble Cheese",
+                "precio": 18600
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/1": {
+      "get": {
+        "summary": "Listar Producto por ID",
+        "responses": {}
+      },
+      "put": {
+        "summary": "Cambiar Producto",
+        "responses": {},
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": {
+                    "type": "string"
+                  },
+                  "precio": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "example": {
+                "nombre": "Mc Super Doble Cheese",
+                "precio": 17600
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Borrar Producto",
+        "responses": {}
+      }
+    }
+  }
+}

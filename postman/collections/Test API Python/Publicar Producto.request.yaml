@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://0.0.0.0:8000/products
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"nombre\": \"Mc Doble Bacon\",\r
+
+    \    \"precio\": 18600\r
+
+    }"
+order: 3857024296855326

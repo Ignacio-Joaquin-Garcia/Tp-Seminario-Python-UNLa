@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: http://0.0.0.0:8000/sales/1
+method: GET
+order: 4498149142378116
