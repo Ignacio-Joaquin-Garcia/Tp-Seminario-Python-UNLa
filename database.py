@@ -5,7 +5,7 @@
 
 ## Libraries -> SQLAlchemy, ORM to communicate between python and SQLite
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship 
-from sqlalchemy import create_engine, Column, Integer, String, Float
+from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Time, ForeignKey
 
 
 ## Creation of the SQLite Engine
@@ -29,7 +29,19 @@ class Products(Base):
     nombre = Column(String, nullable=False)
     precio = Column(Float, nullable=False)
 
-    #ventas = relationship("Sales", back_populates="producto")
+    ventas = relationship("Sales", back_populates="producto")
+
+class Sales(Base):
+    __tablename__ = 'sales'
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    fecha = Column(Date, nullable=False)
+    hora = Column(Time, nullable=False)
+    cantidad = Column(Integer, nullable=False)
+    
+    precio_total = Column(Float, nullable=False)
+
+    id_producto = Column(Integer, ForeignKey("products.id"), nullable=False) # Main Relationship between Products - Sales
+    producto = relationship("Products", back_populates="ventas")
 
 
 ## Creation of Tables

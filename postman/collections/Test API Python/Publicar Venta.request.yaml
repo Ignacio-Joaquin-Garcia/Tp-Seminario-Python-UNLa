@@ -1,0 +1,14 @@
+$kind: http-request
+description: ""
+url: http://0.0.0.0:8000/sales
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"cantidad\": 1,\r
+
+    \    \"id_producto\": 2\r
+
+    }"
+order: 4502019219498689

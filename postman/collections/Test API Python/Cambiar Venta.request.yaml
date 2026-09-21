@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://0.0.0.0:8000/sales/3
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"cantidad\": 2,\r
+
+    \    \"id_producto\": 2,\r
+
+    \    \"fecha\": \"2026-09-20\",\r
+
+    \    \"hora\": \"20:08:42.199310\"  \r
+
+    }"
+order: 4502107119705502
