@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: http://0.0.0.0:8000/carts
+method: GET
+order: 4503508907549502

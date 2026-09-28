@@ -6,9 +6,10 @@
 ## Libraries
 # Import the engine that contains the path to the db
 from fastapi import FastAPI, status, HTTPException
-from database import db_session, Products, Sales
-from schema import ProductCreate, ProductResponse, SalesCreate, SalesResponse, SalesModify
+from database import db_session, Products, Sales, Carts, CartsProducts
+from schema import ProductCreate, ProductResponse, SalesCreate, SalesResponse, SalesModify, SalesAssignCarts, CartsCreate, CartsProductsResponse, CartsResponse, CartsProductsCreate
 from datetime import datetime
+import business_rules as br
 
 ## FastAPI 
 app = FastAPI()
@@ -35,9 +36,7 @@ def get_products():
 @app.get("/products/{id}", response_model=ProductResponse)
 def get_product(id: int):
     try:
-        product = db_session.query(Products).filter(Products.id == id).first()
-        if product == None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producto no encontrado")
+        product = br.product_exists(db_session, id)
         return product
     except HTTPException:
         raise
@@ -61,9 +60,8 @@ def create_product(product : ProductCreate):
 @app.put("/products/{id}", status_code=status.HTTP_200_OK, response_model=ProductResponse)
 def update_product(id: int, product: ProductCreate):
     try:
-        product_to_update = db_session.query(Products).filter(Products.id == id).first()
-        if product_to_update is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producto no encontrado")
+        product_to_update = br.product_exists(db_session, id)
+
         product_to_update.nombre = product.nombre
         product_to_update.precio = product.precio
         db_session.commit()
@@ -79,9 +77,9 @@ def update_product(id: int, product: ProductCreate):
 @app.delete("/products/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(id: int):
     try:
-        product_to_delete = db_session.query(Products).filter(Products.id == id).first()
-        if product_to_delete is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producto no encontrado")
+        product_to_delete = br.product_exists(db_session, id)
+        br.verify_if_product_is_deletable(db_session, id) # Important Business Rule
+
         db_session.delete(product_to_delete)
         db_session.commit()
     except HTTPException:
@@ -89,6 +87,10 @@ def delete_product(id: int):
     except Exception as e:
         db_session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Un error inesperado ocurrio: {e}")
+
+
+
+
 
 # --- VENTAS ---
 # GET /sales
@@ -181,3 +183,118 @@ def delete_sale(id: int):
     except Exception as e:
         db_session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado!")
+
+
+
+
+
+
+# --- Carrito ---
+# 'GET' /carts
+@app.get("/carts", status_code=status.HTTP_200_OK, response_model=list[CartsResponse])
+def get_carts():
+    try:
+        return db_session.query(Carts).all()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
+
+# 'GET' /carts/{id}
+@app.get("/carts/{id}", status_code=status.HTTP_200_OK, response_model=CartsResponse)
+def get_cart(id: int):
+    try:
+        cart = db_session.query(Carts).filter(Carts.id == id).first()
+        if cart is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No se encontro el carrito buscado")
+        return cart
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
+
+# 'POST' /carts
+@app.post("/cart", status_code=status.HTTP_201_CREATED, response_model=CartsResponse)
+def create_cart():
+    try:
+        time_now = datetime.now()
+        new_cart = Carts(estado="abierto", fecha_creacion=time_now.date())
+
+        db_session.add(new_cart)
+        db_session.commit()
+        db_session.refresh(new_cart)
+
+        return new_cart
+    except HTTPException:
+        raise
+    except Exception as e:
+        db_session.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
+
+
+# 'PUT' /carts/{id}
+@app.put("/carts/{id}", status_code=status.HTTP_200_OK, response_model=CartsResponse)
+def update_cart(id: int, body: CartsCreate):
+    try:
+        cart = db_session.query(Carts).filter(Carts.id == id).first()
+        if cart is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrito no encontrado")
+        
+        cart.estado = body.estado
+        cart.fecha_creacion = body.fecha_creacion
+        
+        db_session.commit()
+        db_session.refresh(cart)
+        return cart
+    except HTTPException:
+        raise
+    except Exception as e:
+        db_session.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
+
+# 'DELETE' /carts/{id}
+@app.delete("/carts/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_cart(id: int):
+    try:
+        cart = db_session.query(Carts).filter(Carts.id == id).first()
+        if cart is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrito no encontrado")
+        
+        db_session.delete(cart)
+        db_session.commit()
+    except HTTPException:
+        raise
+    except Exception as e:
+        db_session.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
+
+# 'POST' /carts/{id}/products
+@app.post("/carts/{id}/products", status_code=status.HTTP_201_CREATED, response_model=CartsResponse)
+def add_product_to_cart(id: int, body: CartsProductsCreate):
+    try:
+        cart = db_session.query(Carts).filter(Carts.id == id).first()
+        if cart is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Carrito no encontrado")
+        if cart.estado != "abierto":
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El Carrito esta en estado cerrado!")
+        
+        br.product_exists(db_session, body.id_product)
+
+        cart_product = db_session.query(CartsProducts).filter(CartsProducts.id_carrito == id, CartsProducts.id_producto == body.id_product).first()
+
+        if cart_product is None:
+            new_product_to_cart = CartsProducts(cantidad=body.cantidad, id_producto=body.id_product, id_carrito=id)
+            db_session.add(new_product_to_cart)
+        else:
+            cart_product.cantidad += body.cantidad
+        
+        db_session.commit()
+        db_session.refresh(cart)
+        return cart
+    except HTTPException:
+        raise
+    except Exception as e:
+        db_session.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
+
+# 'DELETE' /carts/{id}/products/{product_id}

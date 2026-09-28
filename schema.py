@@ -7,16 +7,14 @@ from pydantic import BaseModel # Checks Data and Data Structures
 from datetime import date, time # Needed Python Data Structures
 
 
-## Schemas
-
-# Products
-# 'POST' ->  Client send something like this: { "nombre": "Mouse", "precio": 1000 }
+### Schemas
+## ---- Products ----
 class ProductCreate(BaseModel):
     nombre: str
     precio: float
     class Config:
         from_attributes = True
-# 'GET' -> by parameter {ProductCreate} we pass "nombre" and "precio" and the db adds the new field id
+
 class ProductResponse(BaseModel):
     id: int
     nombre: str
@@ -26,32 +24,58 @@ class ProductResponse(BaseModel):
     class Config:
         from_attributes = True
 
-# Sales
-# 'POST'
-class SalesCreate(BaseModel):
-    cantidad: int
-    id_producto: int
 
+## ---- Carts ----
+class CartsCreate(BaseModel):
+    fecha_creacion: date
+    estado: str
+
+class CartsProductsResponse(BaseModel):
+    id: int
+    productos: ProductResponse
+    cantidad: int
+    class Config:
+            from_attributes = True
+
+class CartsResponse(BaseModel):
+    id: int
+    fecha_creacion: date
+    estado: str
+    productos: list[CartsProductsResponse] = []
+    class Config:
+            from_attributes = True
+
+## ---- Carts <-> Products ----
+class CartsProductsCreate(BaseModel):
+    id_product: int
+    cantidad: int
+
+## ---- Sales ----
+class SalesCreate(BaseModel):
+    #cantidad: int
+    #id_producto: int
+    fecha: date
+    hora: time
+    id_carrito: int
     class Config:
         from_attributes = True
 
-# 'GET'
 class SalesResponse(BaseModel):
     id: int
     fecha: date
     hora: time
 
-    producto: ProductResponse
-    cantidad: int
-
+    carrito: CartsResponse
     precio_total: float
 
     class Config:
         from_attributes = True
 
-# 'PUT'
 class SalesModify(BaseModel):
-    cantidad: int
-    id_producto: int
     fecha: date
     hora: time
+    class Config:
+        from_attributes = True
+
+class SalesAssignCarts(BaseModel):
+    id_carrito: int
