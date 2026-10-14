@@ -1,0 +1,4 @@
+$kind: http-request
+url: http://0.0.0.0:8000/carritos/1
+method: DELETE
+order: 16000

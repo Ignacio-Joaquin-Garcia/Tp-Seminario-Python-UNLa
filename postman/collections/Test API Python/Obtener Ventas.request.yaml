@@ -1,4 +1,4 @@
 $kind: http-request
-url: http://0.0.0.0:8000/sales
+url: http://0.0.0.0:8000/ventas
 method: GET
-order: 4382528775582512
+order: 7000

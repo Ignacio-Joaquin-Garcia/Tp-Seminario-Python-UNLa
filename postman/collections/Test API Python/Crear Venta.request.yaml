@@ -1,0 +1,16 @@
+$kind: http-request
+description: ""
+url: http://0.0.0.0:8000/ventas
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"fecha\": \"2026-10-14\",\r
+
+    \  \"hora\": \"06:07:23.561Z\",\r
+
+    \  \"id_carrito\": 1\r
+
+    }"
+order: 9000

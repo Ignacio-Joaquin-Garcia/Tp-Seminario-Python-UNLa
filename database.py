@@ -48,7 +48,7 @@ class Sales(Base):
     def precio_total(self) -> float:
         return sum(cp.cantidad * cp.producto.precio for cp in self.carrito.productos)
 
-    
+
 
 class Carts(Base):
     __tablename__ = 'carts'

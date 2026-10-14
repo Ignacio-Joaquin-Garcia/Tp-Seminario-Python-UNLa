@@ -197,7 +197,7 @@ def assign_cart_to_sale(id: int, body: SalesAssignCarts):
 
 
 #* --- Carrito ---
-#* 'GET' /carritos
+#* GET /carritos
 @app.get("/carritos", status_code=status.HTTP_200_OK, response_model=list[CartsResponse])
 def get_carts():
     try:
@@ -207,7 +207,7 @@ def get_carts():
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
 
-#* 'GET' /carritos/{id}
+#* GET /carritos/{id}
 @app.get("/carritos/{id}", status_code=status.HTTP_200_OK, response_model=CartsResponse)
 def get_cart(id: int):
     try:
@@ -220,7 +220,7 @@ def get_cart(id: int):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
 
-#* 'POST' /carritos
+#* POST /carritos
 @app.post("/carritos", status_code=status.HTTP_201_CREATED, response_model=CartsResponse)
 def create_cart():
     try:
@@ -239,7 +239,7 @@ def create_cart():
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
 
 
-#* 'PUT' /carritos/{id}
+#* PUT /carritos/{id}
 @app.put("/carritos/{id}", status_code=status.HTTP_200_OK, response_model=CartsResponse)
 def update_cart(id: int, body: CartsCreate):
     try:
@@ -261,7 +261,7 @@ def update_cart(id: int, body: CartsCreate):
         db_session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
 
-#* 'DELETE' /carritos/{id}
+#* DELETE /carritos/{id}
 @app.delete("/carritos/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_cart(id: int):
     try:
@@ -279,7 +279,7 @@ def delete_cart(id: int):
         db_session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
 
-#* 'POST' /carritos/{id}/productos
+#* POST /carritos/{id}/productos
 @app.post("/carritos/{id}/productos", status_code=status.HTTP_201_CREATED, response_model=CartsResponse)
 def add_product_to_cart(id: int, body: CartsProductsCreate):
     try:
@@ -308,7 +308,7 @@ def add_product_to_cart(id: int, body: CartsProductsCreate):
         db_session.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Ocurrio un error inesperado: {e}")
 
-#* 'DELETE' /carritos/{id}/productos/{product_id}
+#* DELETE /carritos/{id}/productos/{product_id}
 @app.delete("/carritos/{id}/productos/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_product_from_cart(id: int, id_producto: int):
     try:

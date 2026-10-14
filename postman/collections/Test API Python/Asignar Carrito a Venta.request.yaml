@@ -1,0 +1,7 @@
+$kind: http-request
+url: http://0.0.0.0:8000/ventas/1/carrito
+method: POST
+body:
+  type: json
+  content: "{\r\n    \"id_carrito\": 1\r\n}"
+order: 12000

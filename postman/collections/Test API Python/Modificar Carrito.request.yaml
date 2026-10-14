@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://0.0.0.0:8000/carritos/2
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"fecha_creacion\": \"2026-09-11\",\r
+
+    \    \"estado\": \"abierto\"\r
+
+    }"
+order: 15000

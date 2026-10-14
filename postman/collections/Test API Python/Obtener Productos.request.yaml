@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: http://0.0.0.0:8000/productos
+method: GET
+order: 2000

@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://0.0.0.0:8000/ventas/3
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"fecha\": \"2026-10-14\",\r
+
+    \    \"hora\": \"06:08:18.830Z\" \r
+
+    }"
+order: 10000

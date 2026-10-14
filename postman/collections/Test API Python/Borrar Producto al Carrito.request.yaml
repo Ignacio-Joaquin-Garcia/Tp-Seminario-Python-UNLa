@@ -1,0 +1,5 @@
+$kind: http-request
+description: ""
+url: http://0.0.0.0:8000/carritos/2/productos/1
+method: DELETE
+order: 18440

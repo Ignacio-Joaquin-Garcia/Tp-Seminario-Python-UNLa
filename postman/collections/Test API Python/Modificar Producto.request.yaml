@@ -1,13 +1,13 @@
 $kind: http-request
-url: http://0.0.0.0:8000/products
-method: POST
+url: http://0.0.0.0:8000/productos/2
+method: PUT
 body:
   type: json
   content: "{\r
 
     \    \"nombre\": \"Mc Doble Bacon\",\r
 
-    \    \"precio\": 18600\r
+    \    \"precio\": 11200\r
 
     }"
-order: 3857024296855326
+order: 5000

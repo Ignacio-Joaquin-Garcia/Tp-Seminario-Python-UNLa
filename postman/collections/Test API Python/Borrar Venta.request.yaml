@@ -1,4 +1,4 @@
 $kind: http-request
-url: http://0.0.0.0:8000/sales/1
+url: http://0.0.0.0:8000/ventas/1
 method: DELETE
-order: 4503303246051719
+order: 11000

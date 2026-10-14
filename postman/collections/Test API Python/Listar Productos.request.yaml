@@ -1,5 +1,0 @@
-$kind: http-request
-description: ""
-url: http://0.0.0.0:8000/products
-method: GET
-order: 2980590627713310
