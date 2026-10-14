@@ -1,4 +1,5 @@
-### 'database.py' Responsabilities: (Conection + SQLAlchemy models)
+
+# *  'database.py' Responsabilities: (Conection + SQLAlchemy models)
 # 1. Create the db engine, 
 # 2. Create a Query Session, 
 # 3. Create the Tables / Classes
@@ -30,8 +31,8 @@ class Products(Base):
     nombre = Column(String, nullable=False)
     precio = Column(Float, nullable=False)
     # Relation Data
-    carrito_producto = relationship("CartsProducts", back_populates="productos")
-    #ventas = relationship("Sales", back_populates="producto")
+    carrito_producto = relationship("CartsProducts", back_populates="producto")
+    #! ventas = relationship("Sales", back_populates="producto")
 
 class Sales(Base):
     __tablename__ = 'sales'
@@ -43,10 +44,11 @@ class Sales(Base):
     id_carrito = Column(Integer, ForeignKey("carts.id"), nullable=False, unique=True)
     carrito = relationship("Carts", back_populates="venta")
 
-    #cantidad = Column(Integer, nullable=False)
-    #precio_total = Column(Float, nullable=False)
-    #id_producto = Column(Integer, ForeignKey("products.id"), nullable=False) # Main Relationship between Products - Sales
-    #producto = relationship("Products", back_populates="ventas")
+    @property
+    def precio_total(self) -> float:
+        return sum(cp.cantidad * cp.producto.precio for cp in self.carrito.productos)
+
+    
 
 class Carts(Base):
     __tablename__ = 'carts'
@@ -55,7 +57,7 @@ class Carts(Base):
     fecha_creacion = Column(Date, nullable=False)
     estado = Column(String, nullable=False)
     # Relation Data
-    productos = relationship("CartsProducts", back_populates="carritos")
+    productos = relationship("CartsProducts", back_populates="carritos", cascade="all, delete-orphan")
     venta = relationship("Sales", back_populates="carrito", uselist=False) # By default 'relationship' is for 1:n with uselist=False we map to 1:1
 
 class CartsProducts(Base):
@@ -65,7 +67,7 @@ class CartsProducts(Base):
     cantidad = Column(Integer, nullable=False)
     # Relation Data
     id_producto = Column(Integer, ForeignKey("products.id"), nullable=False)
-    productos = relationship("Products", back_populates="carrito_producto")
+    producto = relationship("Products", back_populates="carrito_producto")
     id_carrito = Column(Integer, ForeignKey("carts.id"), nullable=False)
     carritos = relationship("Carts", back_populates="productos")
     
@@ -78,7 +80,7 @@ if os.path.exists(DB_FILE):
 Base.metadata.create_all(engine)
 
 
-## BD Tests
-#product_test = Products(nombre="Test", precio=2909.9)
-#db_session.add(product_test)
-#db_session.commit()
+##// BD Tests
+#//product_test = Products(nombre="Test", precio=2909.9)
+#//db_session.add(product_test)
+#//db_session.commit()
