@@ -1,57 +1,78 @@
-### 'models.py' Responsabilities: (Pydanbtic schemes)
+
+###* 'models.py' Responsabilities: (Pydanbtic schemes)
 # 1. Create the necesary schemas to work with the db
 
 ## Libraries
 # Import the necessary classes to work with Pydantic Schemas
-from pydantic import BaseModel # Checks Data and Data Structures
+from pydantic import BaseModel, ConfigDict # Checks Data and Data Structures
 from datetime import date, time # Needed Python Data Structures
 
 
-## Schemas
-
-# Products
-# 'POST' ->  Client send something like this: { "nombre": "Mouse", "precio": 1000 }
+###* Schemas
+##* ---- Products ----
 class ProductCreate(BaseModel):
     nombre: str
     precio: float
     class Config:
         from_attributes = True
-# 'GET' -> by parameter {ProductCreate} we pass "nombre" and "precio" and the db adds the new field id
+
 class ProductResponse(BaseModel):
     id: int
     nombre: str
     precio: float
-    # the class config allows pydantic to read python objects, there are 2 ways to do this:
-    # model_config = {"from_attributes": True}
+    #? the class config allows pydantic to read python objects, there are 2 ways to do this:
+    #? model_config = {"from_attributes": True}
     class Config:
         from_attributes = True
 
-# Sales
-# 'POST'
-class SalesCreate(BaseModel):
+
+##* ---- Carts ----
+class CartsCreate(BaseModel):
+    fecha_creacion: date
+    estado: str
+
+class CartsProductsResponse(BaseModel):
+    id: int
+    producto: ProductResponse
     cantidad: int
-    id_producto: int
-
     class Config:
         from_attributes = True
 
-# 'GET'
+class CartsResponse(BaseModel):
+    id: int
+    fecha_creacion: date
+    estado: str
+    productos: list[CartsProductsResponse] = []
+    class Config:
+        from_attributes = True
+
+##* ---- Carts <-> Products ----
+class CartsProductsCreate(BaseModel):
+    id_producto: int
+    cantidad: int
+
+##* ---- Sales ----
+class SalesCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid", from_attributes=True) # Forbids changing the field 'precio_total'
+    fecha: date
+    hora: time
+    id_carrito: int
+
 class SalesResponse(BaseModel):
     id: int
     fecha: date
     hora: time
 
-    producto: ProductResponse
-    cantidad: int
-
+    carrito: CartsResponse
     precio_total: float
 
     class Config:
         from_attributes = True
 
-# 'PUT'
 class SalesModify(BaseModel):
-    cantidad: int
-    id_producto: int
+    model_config = ConfigDict(extra="forbid", from_attributes=True)
     fecha: date
     hora: time
+
+class SalesAssignCarts(BaseModel):
+    id_carrito: int
